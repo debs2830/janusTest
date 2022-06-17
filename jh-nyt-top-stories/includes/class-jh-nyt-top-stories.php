@@ -156,6 +156,7 @@ class Jh_Nyt_Top_Stories {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		  $this->loader->add_action( 'nyt_get_stories', $plugin_admin, 'Jh_Nyt_Top_Stories_Get_Stories');
 
 	}
 

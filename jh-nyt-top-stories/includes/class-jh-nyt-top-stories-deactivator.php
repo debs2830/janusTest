@@ -30,7 +30,10 @@ class Jh_Nyt_Top_Stories_Deactivator {
 	 * @since    1.0.0
 	 */
 	public static function deactivate() {
-
+		wp_clear_scheduled_hook( 'nyt_get_stories' );
+		//do_action('deactive custom post type');
+		//do action to remove custom meta fields
+			
 	}
 
 }

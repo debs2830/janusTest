@@ -100,4 +100,93 @@ class Jh_Nyt_Top_Stories_Admin {
 
 	}
 
+	 function Jh_Nyt_Top_Stories_Get_Stories () {
+			  require ABSPATH . '/wp-admin/includes/post.php';
+		$curl = curl_init();
+
+curl_setopt_array($curl, array(
+  CURLOPT_URL => 'https://api.nytimes.com/svc/topstories/v2/home.json?api-key=KxkgpxsV3z8uAxmbuAKaFdfFcJ9gAl3I',
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_ENCODING => '',
+  CURLOPT_MAXREDIRS => 10,
+  CURLOPT_TIMEOUT => 0,
+  CURLOPT_FOLLOWLOCATION => true,
+  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+  CURLOPT_CUSTOMREQUEST => 'GET',
+));
+
+$response = curl_exec($curl);
+$error = curl_error($curl);
+curl_close($curl);
+	
+	$object = json_decode($response);
+
+	
+$string ='';
+	
+ foreach ($object as $key=>$returned )  {
+	
+
+	 if  ($key =='results')  {
+		   foreach ($returned as $key2=>$story )  {
+			 	$fount_post = post_exists( $story->title,'','','nytstories');
+			
+			   if  (!$fount_post ) {
+				  	$my_post = array(
+				  'post_title'    => wp_strip_all_tags(  $story->title),
+				  'post_excerpt'  =>  $story->abstract,
+					 'post_content'  =>  $story->abstract,
+				  'post_status'   => 'publish',
+				 'post_date' =>  $story->published_date,
+					'post_type'=> 'nytstories',
+					'meta_input' => [ 'url'=> $story->url , 'byline' =>$story->byline ],
+					 'tags_input' =>$story->des_facet
+					);
+
+				
+				wp_insert_post( $my_post );
+				   
+				 $insert_id = wp_insert_post($id);
+			 wp_set_object_terms($insert_id, $story->section, 'category', true);
+				   //doesn't work properly
+			
+			   }
+			
+	
+		  }
+	
+	 }
+ 	
+	
+ }
+
+	}
+	
+	function nyt_shortcode_plugin() { 
+ 
+$args = array(
+    'post_type' => 'nytstories',
+		 'posts_per_page' => 5,
+		 'orderby' => 'date',
+    'order'   => 'DESC'
+);
+$query = new WP_Query( $args );
+	
+
+if ( $query->have_posts() ) {
+    echo '<ul>';
+    while ( $query->have_posts() ) {
+		$byline =  get_post_meta( get_the_ID(), 'byline', true ); 
+		$url =  esc_url( get_post_meta( get_the_ID(), 'url', true ) ); 
+		
+        $query->the_post();
+        echo '<li><a href="' . $url .'" target="_blank">' . get_the_title() . '</a><br><i>' . $byline. '</i></li>';
+    }
+    echo '</ul>';
+}
+wp_reset_postdata();
+	
+  
+}
+	
 }
