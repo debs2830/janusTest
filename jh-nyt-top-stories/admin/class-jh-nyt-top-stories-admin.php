@@ -121,7 +121,8 @@ curl_close($curl);
 	
 	$object = json_decode($response);
 
-	
+	//probably should do a check for status and deal with error
+
 $string ='';
 	
  foreach ($object as $key=>$returned )  {
@@ -162,6 +163,8 @@ $string ='';
 
 	}
 	
+//i didn't know where to initiaite it in the plugin. For now it's in my functions file
+
 	function nyt_shortcode_plugin() { 
  
 $args = array(
